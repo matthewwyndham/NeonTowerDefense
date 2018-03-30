@@ -8,6 +8,7 @@ from colors import *
 from enums import *
 from calculations import *
 from textbox import Textbox
+from resource import Resource
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -25,21 +26,27 @@ background_line_width = 1
 display.init(screen_width, screen_height, cell_size, menu_width, playfield_w, playfield_h, background_line_width)
 events.init()
 
+# TODO: iterate for every level
+current_level = levels.level_1
+current_waves_list = levels.level_1_waves
+
 level_number = 1
 wave_number = 0
 heart_number = 20
 heart_max = heart_number
+money = Resource()
+victorious = False
 
 # clean up the level
-for i in range(len(levels.level_1) - 1):
-    levels.level_1[i] = Terrain(levels.level_1[i])
+for i in range(len(current_level) - 1):
+    current_level[i] = Terrain(current_level[i])
 
 # locations for towers, color can be changed by changing the terrain type
 cells = []
 for i in range(playfield_w * playfield_h):
     x = int(i % playfield_w) * cell_size + menu_width
     y = int(i / playfield_w) * cell_size
-    cells.append(Cell(i, x, y, cell_size, levels.level_1[i]))
+    cells.append(Cell(i, x, y, cell_size, current_level[i]))
     display.register(cells[i])
 
 # the path of positions that enemies must follow
@@ -79,7 +86,7 @@ level_active = False
 
 # this function is part of the menu: playbutton
 def start_level(e):
-    global level_active, menu
+    global level_active, menu, wave_number
     if not level_active:
         if e.type == pygame.MOUSEBUTTONDOWN:
             if e.button == 1:
@@ -90,6 +97,7 @@ def start_level(e):
                         display.remove(menu[2])
                         display.remove(menu[3])
                         display.register(menu[4])
+                        initialize_wave()
 
 
 events.register(start_level)
@@ -107,6 +115,8 @@ display.register(menu[5])
 menu.append(Textbox((5, cell_size * 3 + 5), text_color, font, "Hearts: " + str(heart_number) + "/" + str(heart_max)))
 display.register(menu[6])
 # 7 ; Money
+menu.append(Textbox((5, cell_size * 4 + 5), text_color, font, "Money: " + str(money.get())))
+display.register(menu[7])
 # 8 ; Kill Count
 # 9 ; Towers
 # - 1 ; POISON
@@ -148,7 +158,13 @@ events.register(mouse_control)
 
 
 def initialize_wave():
-    global enemies, wave_number
+    global enemies, wave_number, level_active, victorious
+    wave_number += 1  # we are showing the user that this is wave one, but we are accessing wave 0 in the list
+    if wave_number - 1 < len(current_waves_list):
+        pass
+    else:
+        level_active = False
+        victorious = True
 
 
 
