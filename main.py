@@ -161,7 +161,7 @@ def initialize_wave():
     global enemies, wave_number, level_active, victorious
     wave_number += 1  # we are showing the user that this is wave one, but we are accessing wave 0 in the list
     if wave_number - 1 < len(current_waves_list):
-        pass
+        pass  # TODO: add enemies to the list according to the enemy enum
     else:
         level_active = False
         victorious = True
