@@ -141,10 +141,15 @@ display.register(menu[12])
 menu.append(Tower(-1, cell_size * 3, cell_size * 0 + menu_tower_v_offset, cell_size, 1))
 display.register(menu[13])
 # - 2 ; ICE
+# TODO: add this tower
 # - 3 ; FAST
+# TODO: add this tower
 # - 4 ; STRONG
+# TODO: add this tower
 # - 5 ; LASER
+# TODO: add this tower
 # - 6 ; BOOSTER
+# TODO: add this tower
 
 
 # update the menu items
