@@ -2,6 +2,7 @@ import pygame
 import display
 import events
 import levels
+import generic_renderables
 from towers import Tower
 from cell import Cell
 from colors import *
@@ -14,10 +15,14 @@ pygame.init()
 clock = pygame.time.Clock()
 pygame.font.init()
 font = pygame.font.SysFont('Century Gothic', 18)
+big_font = pygame.font.SysFont('Century Gothic', 22)
 
 screen_width = 800
 screen_height = 600
 cell_size = 40
+menu_item_height = cell_size / 2
+menu_item_v_offset = cell_size / 2 + 5
+menu_tower_v_offset = menu_item_height * 7 + menu_item_v_offset + 7
 menu_width = 200
 playfield_w = int((screen_width - menu_width) / cell_size)
 playfield_h = int(screen_height / cell_size)
@@ -33,8 +38,10 @@ current_waves_list = levels.level_1_waves
 level_number = 1
 wave_number = 0
 heart_number = 20
+kill_counter = 0
 heart_max = heart_number
 money = Resource()
+money.gain(1000)
 victorious = False
 
 # clean up the level
@@ -80,7 +87,7 @@ display.register(menu[0])
 menu.append(Textbox((5, 5), text_color, font, "Neon Tower Defence"))
 display.register(menu[1])
 # 2-4 ; Level
-playbutton = Cell(len(menu), cell_size * 3, cell_size, cell_size, Terrain.PLAYBUTTON)
+playbutton = Cell(len(menu), cell_size * 3 + 5, cell_size, cell_size / 4 * 3, Terrain.PLAYBUTTON)
 level_active = False
 
 
@@ -104,28 +111,52 @@ events.register(start_level)
 
 menu.append(playbutton)
 display.register(menu[2])
-menu.append(Textbox((5, cell_size + 5), text_color, font, "Start Level"))
+menu.append(Textbox((5, cell_size), text_color, big_font, "Start Level"))
 display.register(menu[3])
-menu.append(Textbox((5, cell_size + 5), text_color, font, "Level: " + str(level_number)))
+menu.append(Textbox((5, cell_size), text_color, big_font, "Level: " + str(level_number)))
 # display.register(menu[4])
 # 5 ; Wave
-menu.append(Textbox((5, cell_size * 2 + 5), text_color, font, "Wave: " + str(wave_number)))
+menu.append(Textbox((5, menu_item_height * 2 + menu_item_v_offset), text_color, font, "Wave: " + str(wave_number)))
 display.register(menu[5])
 # 6 ; Hearts
-menu.append(Textbox((5, cell_size * 3 + 5), text_color, font, "Hearts: " + str(heart_number) + "/" + str(heart_max)))
+menu.append(Textbox((5, menu_item_height * 3 + menu_item_v_offset), text_color, font, "Hearts: " + str(heart_number) + "/" + str(heart_max)))
 display.register(menu[6])
 # 7 ; Money
-menu.append(Textbox((5, cell_size * 4 + 5), text_color, font, "Money: " + str(money.get())))
+menu.append(Textbox((5, menu_item_height * 4 + menu_item_v_offset), text_color, font, "Money: " + str(money.get())))
 display.register(menu[7])
 # 8 ; Kill Count
+menu.append(Textbox((5, menu_item_height * 5 + menu_item_v_offset), text_color, font, "Kills: " + str(kill_counter)))
+display.register(menu[8])
 # 9 ; Towers
+menu.append(Textbox((5, menu_item_height * 6 + menu_item_v_offset), dark(red), font, "Towers"))
+display.register(menu[9])
+box = generic_renderables.Box((2, menu_item_height * 6 + menu_item_v_offset + 22), (menu_width - 4, screen_height - (menu_item_height * 6 + menu_item_v_offset + 24)), dark(red))
+menu.append(box)
+display.register(menu[10])
 # - 1 ; POISON
+menu.append(Textbox((5, cell_size * 0 + menu_tower_v_offset), text_color, font, "Poison"))
+display.register(menu[11])
+menu.append(Textbox((5, cell_size * 0 + menu_tower_v_offset + cell_size / 2), text_color, font, "Cost: " + str(tower_cost[1])))
+display.register(menu[12])
+menu.append(Tower(-1, cell_size * 3, cell_size * 0 + menu_tower_v_offset, cell_size, 1))
+display.register(menu[13])
 # - 2 ; ICE
 # - 3 ; FAST
 # - 4 ; STRONG
 # - 5 ; LASER
 # - 6 ; BOOSTER
 
+
+# update the menu items
+def update_menu(e):
+    global menu, wave_number, heart_number, heart_max, money, kill_counter
+    menu[5].text = "Wave: " + str(wave_number)
+    menu[6].text = "Hearts: " + str(heart_number) + "/" + str(heart_max)
+    menu[7].text = "Money: " + str(money.get())
+    menu[8].text = "Kills: " + str(kill_counter)
+
+
+events.register(update_menu)
 # tracks the bullets and draws them, allows them to collide with enemies and cause damage
 on_screen_shots = []
 
@@ -150,8 +181,11 @@ def mouse_control(e):
         if e.button == 1:
             c = find_cell(pygame.mouse.get_pos(), menu_width, cell_size, screen_width)
             if c != -1:
-                # cells[c].t = Terrain((cells[c].t.value + 1) % (Terrain.__len__()))
-                towers[c].t_num = (towers[c].t_num + 1) % TowerType.__len__()
+                if money.can_spend(100):
+                    # cells[c].t = Terrain((cells[c].t.value + 1) % (Terrain.__len__()))
+                    towers[c].t_num = (towers[c].t_num + 1) % TowerType.__len__()
+                    money.spend(100)
+
 
 
 events.register(mouse_control)
@@ -176,7 +210,6 @@ while run:
     # update the level number box (menu[4])
 
     if len(enemies) == 0:
-        wave_number += 1
         initialize_wave()
 
     # update everything that needs updating
@@ -187,6 +220,7 @@ while run:
             e.update(path)
             if not e.alive:
                 enemies.remove(e)
+                kill_counter += 1
                 # break  # may need a break here and there...
             if e.hurts:
                 heart_number -= 1
