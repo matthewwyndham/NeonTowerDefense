@@ -16,11 +16,18 @@ blue = 0, 0, 255
 red = 255, 0, 0
 green = 0, 255, 0
 
+poison = 50, 200, 50
+ice = 0, 0, 255
+fast = 170, 170, 170
+strong = 255, 0, 0
+laser = 100, 200, 0
+boost = 120, 50, 240
+
 background_line_color = 25, 25, 100
 background_color = 10, 10, 15
 
 text_color = 200, 200, 225
 
 terrain_colors = [dark(green), black, dark(red), light(background_line_color), dark(white), dark(blue)]
-tower_colors = [black, blue, green, light(red), light(blue), light(green), dark(blue), white]
-enemy_colors = [white, white, white, white, white]
+tower_colors = [black, poison, ice, fast, strong, laser, boost, white]
+enemy_colors = [white, blue, black, background_line_color, red]

@@ -28,3 +28,5 @@ class Cell:
             if self.y < pos[1] < self.y + self.size:
                 return True
         return False
+
+    def pos(self): return self.x, self.y

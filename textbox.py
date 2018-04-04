@@ -10,6 +10,8 @@ class Textbox:
         self.text = text
         self.floating_textbox = floating
 
+        self.identity = -2  # -2 is a textbox
+
     def render(self, surf):
         text = self.font.render(self.text, False, self.color)
         if self.floating_textbox:
