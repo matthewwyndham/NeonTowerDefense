@@ -17,7 +17,7 @@ class Enemy:
         self.level = level
         self.wave = wave
         imported_hp = enums.enemy_health[etype]
-        modded_hp = level * imported_hp + (wave * 2)
+        modded_hp = level * imported_hp + (wave ** 2)
         self.hp = modded_hp
         self.m_hp = modded_hp
         self.alive = True
@@ -44,6 +44,8 @@ class Enemy:
 
     def max_health(self): return self.m_hp
 
+    def value(self): return enums.enemy_value[self.t]
+
     def current_health(self): return self.hp
 
     def damage(self, power):
@@ -56,6 +58,11 @@ class Enemy:
         pygame.draw.rect(surf, self.color, self.box())
 
     def update(self, path):
+        if self.iced and self.t == 4:
+            self.iced = False
+        if self.poisoned and self.t == 4:
+            self.poisoned = False
+
         if self.current_path_spot < len(path):
             goal = path[self.current_path_spot]
             if self.x < goal[0]:

@@ -43,7 +43,7 @@ heart_number = 20
 kill_counter = 0
 heart_max = heart_number
 money = Resource()
-money.gain(1000)
+money.gain(250)
 victorious = False
 
 # clean up the level
@@ -311,6 +311,7 @@ while run:
                 display.remove(e)
                 enemies.remove(e)
                 kill_counter += 1
+                money.gain(e.value())
                 break
             if e.hurts:
                 heart_number -= 1
