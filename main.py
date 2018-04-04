@@ -18,6 +18,7 @@ pygame.font.init()
 font = pygame.font.SysFont('Century Gothic', 18)
 big_font = pygame.font.SysFont('Century Gothic', 22)
 
+game_speed = 40
 screen_width = 800
 screen_height = 600
 cell_size = 40
@@ -86,10 +87,10 @@ for i in range(len(cells)):
     c = cells[i]
     if c.t == Terrain.PATH:
         towers.append(Tower(i, c.x, c.y, cell_size, TowerType.PATH.value))  # users can't replace this
-        display.register(towers[len(towers) - 1])
+        #display.register(towers[len(towers) - 1])
     else:
         towers.append(Tower(i, c.x, c.y, cell_size, TowerType.ZEROTOWER.value))  # users can replace this
-        display.register(towers[len(towers) - 1])
+        #display.register(towers[len(towers) - 1])
 
 # enemies
 enemies = []
@@ -231,21 +232,25 @@ display.register(mouse_tower)
 
 # TODO: change this function to upgrade placed towers
 def mouse_control(e):
-    global mouse_tower, menu_width, cell_size, screen_width, money, towers, display
+    global mouse_tower, menu_width, cell_size, screen_width, money, towers, display, cells, playfield_w
     if e.type == pygame.MOUSEBUTTONDOWN:
         m_pos = pygame.mouse.get_pos()
         if e.button == 1:
             c = find_cell(m_pos, menu_width, cell_size, screen_width)
             if c != -1:
                 if mouse_tower.follow_mouse:
-                    if money.can_spend(100):
-                        # cells[c].t = Terrain((cells[c].t.value + 1) % (Terrain.__len__()))
-                        # towers[c].t_num = (towers[c].t_num + 1) % TowerType.__len__()
-                        towers[c] = Tower(c, towers[c].x, towers[c].y, cell_size, mouse_tower.t_num)
-                        display.register(towers[c])
-                        display.remove(mouse_tower)
-                        mouse_tower.follow_mouse = False
-                        money.spend(100)
+                    if (towers[c].t_num == TowerType.ZEROTOWER.value) and (cells[c].t != Terrain.OBSTRUCTED):
+                        if money.can_spend(100):
+                            # cells[c].t = Terrain((cells[c].t.value + 1) % (Terrain.__len__()))
+                            # towers[c].t_num = (towers[c].t_num + 1) % TowerType.__len__()
+                            towers[c] = Tower(c, towers[c].x, towers[c].y, cell_size, mouse_tower.t_num)
+                            display.register(towers[c])
+                            display.remove(mouse_tower)
+                            mouse_tower.follow_mouse = False
+                            money.spend(100)
+                # else:
+                #     for n in find_neighbors(cells[c].identity, len(cells), playfield_w):
+                #         cells[n].t = Terrain.OBSTRUCTED
             if c == -1:
                 if not mouse_tower.follow_mouse:
                     for item in menu:
@@ -331,5 +336,5 @@ while run:
 
     events.check()
     display.update()
-    clock.tick(60)
+    clock.tick(game_speed)
 exit(0)
