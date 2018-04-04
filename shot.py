@@ -64,7 +64,7 @@ class Shot:
                 self.alive = False
             if self.speed == 0:
                 self.lazer_counter += 1
-                if self.lazer_counter > 5:
+                if self.lazer_counter > 3:
                     e.damage(self.power)
                     self.alive = False
         else:
