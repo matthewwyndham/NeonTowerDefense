@@ -24,6 +24,7 @@ class Tower:
         self.upgrade_cost = 10
         self.follow_mouse = False
         self.show_r = False
+        self.font = pygame.font.SysFont('Century Gothic', 12)
 
     def color(self): return tower_colors[self.t_num]
 
@@ -45,6 +46,8 @@ class Tower:
         else:
             pygame.draw.circle(surf, self.color(), self.box.center, self.size // 2, 4)
             self.gun.render(surf)
+            text = self.font.render(str(self.level), False, self.color())
+            surf.blit(text, (self.pos()[0] + 15, self.pos()[1] + 10))
             if self.show_r:
                 pygame.draw.circle(surf, red, self.box.center, int(self.range()), 1)
 

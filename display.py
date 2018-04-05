@@ -40,7 +40,7 @@ def init(w, h, cell_size, menu_width, playfield_w, playfield_h, background_line_
     pygame.display.init()
     width = w
     height = h
-    screen = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
     background = pygame.Surface((width, height))
     background.fill(background_color)
     for i in range(playfield_w):
