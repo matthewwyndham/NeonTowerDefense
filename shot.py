@@ -19,8 +19,7 @@ class Shot:
 
     def pos(self): return self.x, self.y
 
-    def end(self, enemies):
-        target_pos = enemies[self.target].center()
+    def end(self, target_pos):
         if self.speed == 0:
             return target_pos
         else:
@@ -53,15 +52,16 @@ class Shot:
     def update(self, enemies):
         if self.target < len(enemies):
             e = enemies[self.target]
-            self.temptarget = self.end(enemies)
+            self.temptarget = self.end(e.center())
             self.move_towards(e.center())
-            if e.box().collidepoint(self.x, self.y):
-                e.damage(self.power)
-                if self.poison:
-                    e.poisoned = True
-                if self.ice:
-                    e.iced = True
-                self.alive = False
+            for enemy in enemies:
+                if enemy.box().collidepoint(self.x, self.y):
+                    enemy.damage(self.power)
+                    if self.poison:
+                        enemy.poisoned = True
+                    if self.ice:
+                        enemy.iced = True
+                    self.alive = False
             if self.speed == 0:
                 self.lazer_counter += 1
                 if self.lazer_counter > 3:

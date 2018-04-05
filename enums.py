@@ -37,7 +37,7 @@ class EnemyType(Enum):
     RESIST = 4
 
 
-enemy_speed  = [0,   2,   5,  2.5,    3]
-enemy_health = [0,  50,  20,   15,   20]
-enemy_value  = [0,  20,  10,    3,   20]
+enemy_speed  = [0,   2, 4.7,  2.5,  2.7]
+enemy_health = [0,  50,  20,   10,   20]
+enemy_value  = [0,  20,  15,    3,   20]
 

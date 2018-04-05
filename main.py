@@ -18,7 +18,7 @@ pygame.font.init()
 font = pygame.font.SysFont('Century Gothic', 18)
 big_font = pygame.font.SysFont('Century Gothic', 22)
 
-game_speed = 40
+game_speed = 50
 screen_width = 800
 screen_height = 600
 cell_size = 40
@@ -44,7 +44,7 @@ heart_number = 20
 kill_counter = 0
 heart_max = heart_number
 money = Resource()
-money.gain(250)
+money.gain(350)
 victorious = False
 
 # clean up the level
@@ -248,7 +248,10 @@ def mouse_control(e):
                             display.remove(mouse_tower)
                             mouse_tower.follow_mouse = False
                             money.spend(100)
-                # else:
+                else:
+                    if money.can_spend(towers[c].upgrade_cost):
+                        money.spend(towers[c].upgrade_cost)
+                        towers[c].upgrade()
                 #     for n in find_neighbors(cells[c].identity, len(cells), playfield_w):
                 #         cells[n].t = Terrain.OBSTRUCTED
             if c == -1:
@@ -273,23 +276,35 @@ def initialize_wave():
     global enemies, wave_number, level_active, victorious, level_number, cell_size
     wave_number += 1  # we are showing the user that this is wave one, but we are accessing wave 0 in the list
     if wave_number - 1 < len(current_waves_list):
+        print(wave_number, " Wave ")
         counter = 0
         for num in range(len(current_waves_list[wave_number - 1])):
             enemies.append(Enemy(counter, cell_size / 2, current_waves_list[wave_number - 1][num], level_number,
                                  wave_number, (menu_width, -cell_size - (counter * 30))))
             display.register(enemies[counter])
-            print(current_waves_list[wave_number - 1][num])
+            print(counter, current_waves_list[wave_number - 1][num])
             counter += 1
     else:
         level_active = False
         victorious = True
 
 
+def cheat(e):
+    global money
+    if e.type == pygame.KEYDOWN:
+        if e.key == pygame.K_c:
+            money.gain(1000)
+
+events.register(cheat)
 
 while run:
     m_pos = pygame.mouse.get_pos()
 
     update_menu()
+
+    if heart_number < 1:
+        level_active = False
+        victorious = False
 
     # if level is over, show the play button
     # display.register(menu[2])

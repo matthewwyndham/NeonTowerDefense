@@ -62,7 +62,7 @@ class Tower:
                         if self.t_num == 2:
                             on_screen_shots[len(on_screen_shots) - 1].ice = True
                         self.coolness = self.cooldown()
-                    break
+                        break
             if self.coolness > 0:
                 self.coolness -= 1
             # point at the first enemy in range
@@ -82,11 +82,12 @@ class Tower:
         return False
 
     def upgrade(self):
-        self.__c_mod -= 0.1  # gets smaller
-        self.__r_mod += 2.0  # gets bigger
+        self.__c_mod -= 0.05  # gets smaller
+        self.__r_mod += 0.07  # gets bigger
         self.__p_mod += 1.0  # gets bigger
-        self.__s_mod += 0.5  # gets bigger
-        self.upgrade_cost *= 2
+        # self.__s_mod += 0.5  # gets bigger
+        self.upgrade_cost += (self.upgrade_cost / 2)
+        self.upgrade_cost = int(self.upgrade_cost * 1.5)
         self.level += 1
 
     def show_range(self, mouse):
