@@ -1,3 +1,5 @@
+Requires: Python3 and Pygame
+
 Neon Tower Defense
 
 Python 3 and Pygame based Tower defense game.
